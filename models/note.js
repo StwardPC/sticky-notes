@@ -9,15 +9,11 @@ const noteSchema = new Schema({
     type: String,
     required: true,
   },
-  author: {
-    type: String,
-    required: true,
-  },
   date: {
     type: Date,
     required: true,
   },
-  creator: {
+  author: {
     type: Schema.Types.ObjectID,
     ref: "User",
   },

@@ -5,6 +5,9 @@
 .idea
 node_modules
 nodemon.json
+middleware/in-auth.js
+graphql/resolvers/auth.js
+
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
