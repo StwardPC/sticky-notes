@@ -5,7 +5,7 @@ const { parseNoteData } = require("./merge");
 
 module.exports = {
   notes: () => {
-    return Note.find(/*{category: "Home" }*/)
+    return Note.find()
       .then((notes) => {
         return notes.map((note) => {
           return parseNoteData(note);
@@ -13,6 +13,17 @@ module.exports = {
       })
       .catch((err) => {
         throw new Error("Something happened");
+      });
+  },
+  userNotes: (args) => {
+    return Note.find({ author: args.unInput._id })
+      .then((notes) => {
+        return notes.map((note) => {
+          return parseNoteData(note);
+        });
+      })
+      .catch((err) => {
+        throw new Error("Something happened with user's notes");
       });
   },
   createNote: async (args, req) => {

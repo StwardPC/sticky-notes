@@ -24,6 +24,12 @@ module.exports = buildSchema(`
         tokenExpiration: Int!
       }
       
+      type currentUserData {
+        fullName: String!
+        username: String!
+        email: String!
+      }
+      
       input NoteInput {
         category: String!
         body: String!
@@ -34,10 +40,15 @@ module.exports = buildSchema(`
         email: String!
         password: String
       }
+      input userNoteInput {
+        _id: String!
+      }
     
       type RootQuery {
         notes: [Note!]!
         login(email: String!, password: String!): AuthData!
+        userNotes(unInput: userNoteInput): [Note!]!
+        currentUser (_id: String!): currentUserData!
       }
       
       type RootMutation {
