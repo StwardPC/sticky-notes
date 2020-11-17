@@ -53,7 +53,10 @@ module.exports = buildSchema(`
       
       type RootMutation {
         createNote(nInput: NoteInput): Note
+        editNote(_id: String!, category: String!, body: String!): Note
+        deleteNote(_id: String!): Note
         createUser(uInput: UserInput): User
+        deleteUser(_id: String!): User
       }
       
       schema{

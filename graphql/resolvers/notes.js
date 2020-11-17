@@ -4,6 +4,7 @@ const User = require("../../models/user");
 const { parseNoteData } = require("./merge");
 
 module.exports = {
+  // GET ALL NOTES
   notes: () => {
     return Note.find()
       .then((notes) => {
@@ -15,6 +16,7 @@ module.exports = {
         throw new Error("Something happened");
       });
   },
+  // GET ALL NOTES FROM CURRENT USER
   userNotes: (args) => {
     return Note.find({ author: args.unInput._id })
       .then((notes) => {
@@ -26,6 +28,7 @@ module.exports = {
         throw new Error("Something happened with user's notes");
       });
   },
+  // CREATE A NOTE
   createNote: async (args, req) => {
     if (!req.isIn) {
       throw new Error("Login first");
@@ -54,6 +57,35 @@ module.exports = {
         console.log(err);
         throw err;
       }
+    }
+  },
+  editNote: async ({ _id, category, body }) => {
+    const note = await Note.findOne({ _id: _id });
+    if (note) {
+      await Note.updateOne(
+        { _id: note._doc._id },
+        { category: category, body: body }
+      );
+      return {
+        _id: note._doc._id,
+        category: note._doc.category,
+        body: note._doc.body,
+      };
+    } else {
+      throw new Error("Edit failed");
+    }
+  },
+  deleteNote: async ({ _id }) => {
+    const note = await Note.findOne({ _id: _id });
+    if (note) {
+      await Note.deleteOne({ _id: note._doc._id });
+      return {
+        _id: note._doc._id,
+        category: note._doc.category,
+        body: note._doc.body,
+      };
+    } else {
+      throw new Error("Delete failed");
     }
   },
 };
