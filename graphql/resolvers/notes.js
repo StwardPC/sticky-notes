@@ -75,10 +75,23 @@ module.exports = {
       throw new Error("Edit failed");
     }
   },
-  deleteNote: async ({ _id }) => {
+  deleteNote: async ({ _id, userID }) => {
     const note = await Note.findOne({ _id: _id });
+
     if (note) {
+      // THIS WILL DELETE THE NOTE ITSELF
       await Note.deleteOne({ _id: note._doc._id });
+
+      // AND THIS WILL DELETE THE NOTE FROM THE USER'S CREATEDNOTES ARRAY
+      await User.updateOne(
+        { _id: userID },
+        {
+          $pull: {
+            createdNotes: note._doc._id,
+          },
+        }
+      );
+
       return {
         _id: note._doc._id,
         category: note._doc.category,
