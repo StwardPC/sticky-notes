@@ -59,46 +59,53 @@ module.exports = {
       }
     }
   },
-  editNote: async ({ _id, category, body }) => {
-    const note = await Note.findOne({ _id: _id });
-    if (note) {
-      await Note.updateOne(
-        { _id: note._doc._id },
-        { category: category, body: body }
-      );
-      return {
-        _id: note._doc._id,
-        category: note._doc.category,
-        body: note._doc.body,
-      };
+  editNote: async ({ _id, category, body }, req) => {
+    if (!req.isIn) {
+      throw new Error("Login first for editing");
     } else {
-      throw new Error("Edit failed");
+      const note = await Note.findOne({ _id: _id });
+      if (note) {
+        await Note.updateOne(
+          { _id: note._doc._id },
+          { category: category, body: body }
+        );
+        return {
+          _id: note._doc._id,
+          category: note._doc.category,
+          body: note._doc.body,
+        };
+      } else {
+        throw new Error("Edit failed");
+      }
     }
   },
-  deleteNote: async ({ _id, userID }) => {
-    const note = await Note.findOne({ _id: _id });
-
-    if (note) {
-      // THIS WILL DELETE THE NOTE ITSELF
-      await Note.deleteOne({ _id: note._doc._id });
-
-      // AND THIS WILL DELETE THE NOTE FROM THE USER'S CREATEDNOTES ARRAY
-      await User.updateOne(
-        { _id: userID },
-        {
-          $pull: {
-            createdNotes: note._doc._id,
-          },
-        }
-      );
-
-      return {
-        _id: note._doc._id,
-        category: note._doc.category,
-        body: note._doc.body,
-      };
+  deleteNote: async ({ _id, userID }, req) => {
+    if (!req.isIn) {
+      throw new Error("Login first for deleting");
     } else {
-      throw new Error("Delete failed");
+      const note = await Note.findOne({ _id: _id });
+      if (note) {
+        // THIS WILL DELETE THE NOTE ITSELF
+        await Note.deleteOne({ _id: note._doc._id });
+
+        // AND THIS WILL DELETE THE NOTE FROM THE USER'S CREATEDNOTES ARRAY
+        await User.updateOne(
+          { _id: userID },
+          {
+            $pull: {
+              createdNotes: note._doc._id,
+            },
+          }
+        );
+
+        return {
+          _id: note._doc._id,
+          category: note._doc.category,
+          body: note._doc.body,
+        };
+      } else {
+        throw new Error("Delete failed");
+      }
     }
   },
 };
